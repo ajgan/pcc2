@@ -348,21 +348,21 @@ bool *get_bin(string name, int tam, int binWindow){
 
 vector <int> suffix_array(string bin, int binWindow, int tam){
     vector <int> suf;
-    binWindow --;
-    for(int i = 0; i < tam*binWindow; i += binWindow){
-        vector <int> x;
-        for(int j = i; j<i+binWindow; j++){
-            x.push_back(bin[j]);
-            //cout << bin[j];
+    int i = 0;
+    while(i < tam*binWindow){
+        vector <int> x = {};
+        for(int j = 0; j<binWindow; j++){
+            x.push_back((int)bin[i+j] - 48);
         }
 
-        for (int i; i<x.size(); i++) {
-            cout << x[i];
-        }
         int num = bin_to_dec(x);
-        cout << num << "\n";
         suf.push_back(num);
+        i += binWindow;
     }
+
+    // for (int i = 0; i<suf.size(); i++){
+    //     cout << suf[i] << " - ";
+    // }
 
     // int *sarray = new int[suf.size()];
     //
@@ -386,11 +386,16 @@ int search(char *pat, string txt, vector <int> sarray, int n){
 
     while(ll <= lr){
         int med = ll + (lr-ll)/2;
-        cout << txt.substr(sarray[med], n-sarray[med]) << "\n";
-        cout << med << " ";
-        cout << sarray[med] << " ";
-        cout << pat << "\n";
-        int out = compare(pat, txt+txt.substr(sarray[med], n-sarray[med]), m);
+        cout << txt + txt.substr(sarray[med], n-sarray[med]) << "\n";
+        // cout << med << " ";
+        // cout << sarray[med] << " ";
+        // cout << pat << "\n";
+        string tocomp = txt+txt.substr(sarray[med], n-sarray[med]);
+        // int out = compare(pat, txt+txt.substr(sarray[med], n-sarray[med]), m);
+        int out = -1;
+        if (tocomp.find(pat) != string::npos) {
+            out = 0;
+        }
 
         if(out == 0) return sarray[med];
 
@@ -654,18 +659,21 @@ int main(int argc, char** argv) {
 
         string bitsIdx = "";
 
-        cout << textoIdx << "\n";
-        cout << lenIdx << "\n";
+        // cout << textoIdx << "\n";
+        //cout << lenIdx << "\n";
         for (int i =0; i<lenIdx; i++) {
-            cout << (int)(unsigned char)textoIdx[i] << "\n";
+            //cout << (int)(unsigned char)textoIdx[i] << "\n";
             bitsIdx += encodeBits(255, (int)(unsigned char)textoIdx[i]);
         }
-        cout << bitsIdx.length()/4 << "\n";
+        //cout << bitsIdx.length()/4 << "\n";
         // bool *bin = get_bin(fileName+".idx", tam, binWindow);
-        vector <int> sarray2 = suffix_array(bitsIdx, binWindow, tam+1);
+        // cout << bitsIdx.length()<< "\n";
+        // cout << binWindow << "\n";
+        // cout << tam << "\n";
+        vector <int> sarray2 = suffix_array(bitsIdx, binWindow, tam);
 
         for (int j = 0; j < mypats.size(); j++) {
-            cout << mypats[j] << "\n";
+            // cout << mypats[j] << "\n";
             int out = search(mypats[j], textC, sarray2, tam);
             cout << "Ocorrências: " << out << endl;
         }
